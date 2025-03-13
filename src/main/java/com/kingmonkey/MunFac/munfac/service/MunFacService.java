@@ -1,4 +1,6 @@
-package com.kingmonkey.MunFac.munfac;
+package com.kingmonkey.MunFac.munfac.service;
+
+import com.kingmonkey.MunFac.munfac.dto.MunDTO;
 
 public interface MunFacService {
 

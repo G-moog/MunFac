@@ -1,9 +1,10 @@
-package com.kingmonkey.MunFac.munfac;
+package com.kingmonkey.MunFac.munfac.service;
 
+import com.kingmonkey.MunFac.munfac.dto.MunDTO;
 import org.springframework.stereotype.Service;
 
 @Service("MunFacService")
-public class MunFacServiceImpl implements MunFacService{
+public class MunFacServiceImpl implements MunFacService {
 
     @Override
     public int createMun(MunDTO munDTO) throws Exception {

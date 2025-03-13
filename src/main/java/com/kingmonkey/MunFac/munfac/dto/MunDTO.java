@@ -1,4 +1,4 @@
-package com.kingmonkey.MunFac.munfac;
+package com.kingmonkey.MunFac.munfac.dto;
 
 import java.util.Objects;
 

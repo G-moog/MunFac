@@ -1,8 +1,8 @@
-package com.kingmonkey.MunFac.solvingpage;
+package com.kingmonkey.MunFac.solvingpage.controller;
 
 import com.kingmonkey.MunFac.common.ResponseDTO;
-import com.kingmonkey.MunFac.munfac.MunDTO;
-import com.kingmonkey.MunFac.munfac.MunFacService;
+import com.kingmonkey.MunFac.munfac.dto.MunDTO;
+import com.kingmonkey.MunFac.munfac.service.MunFacService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
