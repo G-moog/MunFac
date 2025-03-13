@@ -1,0 +1,27 @@
+body{
+    background-color: cadetblue;
+}
+
+.munTypeChooserArea{
+    background-color: aqua;
+    height: 30px;
+
+}
+
+.munTypeChooserBtn{
+    display: inline-block;
+    width: 110px; 
+    margin: auto;
+    height: 30px;
+}
+
+.munContent{
+    margin: auto;
+    width: 300px;
+    height: 300px;
+}
+
+.eqAnswer{
+    width: 300px;
+    height: 300px;
+}
