@@ -4,6 +4,9 @@ import com.kingmonkey.MunFac.munfac.Entity.Munjae;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface MunFacRepository extends JpaRepository<Munjae, Integer> {
 
@@ -12,14 +15,14 @@ public interface MunFacRepository extends JpaRepository<Munjae, Integer> {
     <S extends Munjae> S save(S entity);
 
     //문제 삭제
-
     @Override
-    void deleteById(Integer id);
+    void deleteById(Integer munNo);
 
 
     //문제 수정
 
 
     //문제 조회
-
+    @Override
+    Optional<Munjae> findById(Integer munNo);
 }
