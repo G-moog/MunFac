@@ -43,6 +43,9 @@ public class MunFacController {
     @GetMapping("/createmun")
     public ResponseEntity<ResponseDTO> createMun(MunDTO munDTO) {
 
+        System.out.println("===============================");
+        System.out.println(munDTO.toString());
+        System.out.println("===============================");
 
         //여기서 munDTO의 데이터를 insert한다. 1은 성공. 0은 실패
         int insertResult = 0;

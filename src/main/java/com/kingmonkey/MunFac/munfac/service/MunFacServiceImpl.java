@@ -1,14 +1,35 @@
 package com.kingmonkey.MunFac.munfac.service;
 
+import com.kingmonkey.MunFac.munfac.Entity.Munjae;
 import com.kingmonkey.MunFac.munfac.dto.MunDTO;
+import com.kingmonkey.MunFac.munfac.repository.MunFacRepository;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("MunFacService")
 public class MunFacServiceImpl implements MunFacService {
 
+    private final MunFacRepository munFacRepository;
+    private final ModelMapper modelMapper;
+
+    @Autowired
+    public MunFacServiceImpl(MunFacRepository munFacRepository, ModelMapper modelMapper) {
+        this.munFacRepository = munFacRepository;
+        this.modelMapper = modelMapper;
+    }
+
     @Override
     public int createMun(MunDTO munDTO) throws Exception {
-        return 0;
+
+        Munjae munjae = modelMapper.map(munDTO, Munjae.class);
+        Object returnObject = munFacRepository.save(munjae);
+
+        if(returnObject == null){
+            return 0;
+        }else{
+            return 1;
+        }
     }
 
     @Override

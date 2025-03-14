@@ -1,5 +1,6 @@
 package com.kingmonkey.MunFac.munfac.service;
 
+import com.kingmonkey.MunFac.munfac.Entity.Munjae;
 import com.kingmonkey.MunFac.munfac.dto.MunDTO;
 
 public interface MunFacService {

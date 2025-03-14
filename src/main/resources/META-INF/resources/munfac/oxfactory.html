@@ -19,6 +19,9 @@
 
     <!-- 객관식 문제 만드는 공간(S) -->
     <form>
+        <input type="hidden" name="munType" value="ox"/>
+        <input type="hidden" id="answer" name="answer" value="0"/>
+
         <label>문제 내용</label> <br />
         <input class="mcMunContent" name="munContent" />
         
@@ -26,10 +29,10 @@
 
         <label>보기</label> <br />
         <label for="option1">O</label>
-        <input type="radio" id="option1" name="options" value="1"><br>
+        <input type="radio" id="choose1Content" name="choose1Content" value="O"><br>
         
         <label for="option2">X</label>
-        <input type="radio" id="option2" name="options" value="2"><br>
+        <input type="radio" id="choose2Content" name="choose2Content" value="X"><br>
         
         
 

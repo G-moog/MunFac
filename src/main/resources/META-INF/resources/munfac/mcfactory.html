@@ -18,42 +18,45 @@
     <!-- 객관식 주관식 O/X 고르는 상단 메뉴(E) -->
 
     <!-- 객관식 문제 만드는 공간(S) -->
-    <form>
+    <form action="/munfac/createmun">
+        <input type="hidden" name="munType" value="mc"/>
+        <input type="hidden" id="answer" name="answer" value="0"/>
+
         <label>문제 내용</label> <br />
         <input class="munContent" name="munContent" />
         
         <br />
 
         <label>보기</label> <br />
-        <input id="option1" name="options" value="1">
-        <label for="option1">1</label><br>
+        <input id="choose1Content" name="choose1Content" value="1">
+        <label for="choose1Content">1</label><br>
         
-        <input id="option2" name="options" value="2">
-        <label for="option2">2</label><br>
+        <input id="choose2Content" name="choose2Content" value="2">
+        <label for="choose2Content">2</label><br>
         
-        <input id="option3" name="options" value="3">
-        <label for="option3">3</label><br>
+        <input id="choose3Content" name="choose3Content" value="3">
+        <label for="choose3Content">3</label><br>
         
-        <input id="option4" name="options" value="4">
-        <label for="option4">4</label><br>
+        <input id="choose4Content" name="choose4Content" value="4">
+        <label for="choose4Content">4</label><br>
         
-        <input id="option5" name="options" value="5">
-        <label for="option5">5</label><br>
+        <input id="choose5Content" name="choose5Content" value="5">
+        <label for="choose5Content">5</label><br>
 
         <label>정답</label><br />
-        <input type="radio" id="option1" name="options" value="1">
+        <input type="radio" id="option1" value="1">
         <label for="option1">1</label><br>
         
-        <input type="radio" id="option2" name="options" value="2">
+        <input type="radio" id="option2" value="2">
         <label for="option2">2</label><br>
         
-        <input type="radio" id="option3" name="options" value="3">
+        <input type="radio" id="option3" value="3">
         <label for="option3">3</label><br>
         
-        <input type="radio" id="option4" name="options" value="4">
+        <input type="radio" id="option4" value="4">
         <label for="option4">4</label><br>
         
-        <input type="radio" id="option5" name="options" value="5">
+        <input type="radio" id="option5" value="5">
         <label for="option5">5</label><br>
 
 
