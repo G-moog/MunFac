@@ -18,17 +18,17 @@ public class Authority implements Serializable {
     private static final long serialVersionUID = 1L; // 고유식별자 필드
 
     @Id
-    @Column(name = "AUTHNO")
+    @Column(name = "AUTH_NO")
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "AUTHORITY_SEQ_GENERATOR"
     )
     private int authNo;
 
-    @Column(name = "AUTHNM")
+    @Column(name = "AUTH_NM")
     private String authNm;
 
-    @Column(name = "AUTHLV")
+    @Column(name = "AUTH_LV")
     private int authLv;
 
 }
