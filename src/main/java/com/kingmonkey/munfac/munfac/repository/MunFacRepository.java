@@ -24,4 +24,5 @@ public interface MunFacRepository extends JpaRepository<Munjae, Integer> {
     //문제 조회
     @Override
     Optional<Munjae> findById(Integer munNo);
+
 }

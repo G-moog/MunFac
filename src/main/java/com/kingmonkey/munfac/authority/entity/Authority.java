@@ -1,12 +1,19 @@
 package com.kingmonkey.munfac.authority.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "AUTHORITY")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @SequenceGenerator(
         name = "AUTHORITY_SEQ_GENERATOR",
         sequenceName = "SEQ_AUTHORITY_CODE",

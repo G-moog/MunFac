@@ -1,6 +1,9 @@
 package com.kingmonkey.munfac.member.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -8,6 +11,9 @@ import java.util.Date;
 
 @Entity
 @Table(name = "MEMBER")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @SequenceGenerator(
         name = "MEMBER_SEQ_GENERATOR",
         sequenceName = "SEQ_MEMBER_CODE",
@@ -19,51 +25,29 @@ public class Member implements Serializable {
     private static final long serialVersionUID = 1L; // 고유식별자 필드
 
     @Id
-    @Column(name = "MEMBER_CODE")
+    @Column(name = "MEMBER_NO")
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "MEMBER_SEQ_GENERATOR"
     )
-    private int memberCode;
+    private int memberNo;
+
+    @Column(name = "MEMBER_ID")
+    private String memberId;
 
     @Column(name = "MEMBER_PW")
     private String memberPw;
 
-    @Column(name = "MEMBER_NAME")
-    private String memberName;
-
-    @Column(name = "MEMBER_RRN")
-    private String memberRrn;
-
-    @Column(name = "MEMBER_ENTDATE")
-    private Date memberEntDate;
-
-    @Column(name = "MEMBER_RETDATE")
-    private Date memberRetDate;
-
-    @Column(name = "MEMBER_PHONE")
-    private String memberPhone;
-
-    @Column(name = "MEMBER_MOBILE")
-    private String memberMobile;
+    @Column(name = "MEMBER_NM")
+    private String memberNm;
 
     @Column(name = "MEMBER_EMAIL")
     private String memberEmail;
 
-    @Column(name = "MEMBER_ADDRESS")
-    private String memberAddress;
+    @Column(name = "AUTH_NO")
+    private  int authNo;
 
-    @Column(name = "MEMBER_IMAGE")
-    private String memberImage;
 
-    @Column(name = "MEMBER_ACCOUNT")
-    private String memberAccount;
-
-    @Column(name = "MEMBER_THEME")
-    private String memberTheme;
-
-    @Column(name = "MEMBER_STAMP")
-    private String memberStamp;
 
 
 
