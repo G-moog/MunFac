@@ -1,10 +1,12 @@
 package com.kingmonkey.munfac.authority.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class TokenDTO {
 
     private String grantType;            // 토큰 타입
