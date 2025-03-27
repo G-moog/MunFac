@@ -4,21 +4,25 @@ import java.util.Arrays;
 
 import com.kingmonkey.munfac.jwt.JwtAccessDeniedHandler;
 import com.kingmonkey.munfac.jwt.JwtAuthenticationEntryPoint;
+import com.kingmonkey.munfac.jwt.JwtAuthenticationFilter;
 import com.kingmonkey.munfac.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+@Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     private final TokenProvider tokenProvider;
@@ -37,7 +41,7 @@ public class SecurityConfig {
 
     // 1. 암호화 처리를 위한 PasswordEncoder를 빈으로 설정(빈을 등록시 메소드 이름 오타 없을 것)
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -51,8 +55,10 @@ public class SecurityConfig {
     }
 
 
+    // 3. HTTP요청에 대한 권한별 설정(세션 인증 -> 토큰 인증으로 인해 바뀐 부분 있음)
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http
                 // CSRF 비활성화
                 .csrf(csrf -> csrf.disable())
@@ -88,13 +94,18 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // CORS 설정 (별도 Bean으로 분리)
+
+
+    // 4. CORS 설정용 Bean(허용할 origin과 httpMethod 종류와 header 값)
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*")); // 운영 환경에서는 구체적 도메인 지정
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "DELETE", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Origin", "Content-type"
+                , "Access-Control-Allow-Headers", "Authorization"
+                , "X-Requested-With"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

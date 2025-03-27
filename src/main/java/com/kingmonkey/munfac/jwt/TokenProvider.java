@@ -1,15 +1,12 @@
 package com.kingmonkey.munfac.jwt;
 
 import java.security.Key;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import com.kingmonkey.munfac.authority.dto.TokenDTO;
-import com.kingmonkey.munfac.authority.entity.Authority;
 import com.kingmonkey.munfac.exception.TokenException;
 import com.kingmonkey.munfac.member.entity.Member;
 import org.slf4j.Logger;
