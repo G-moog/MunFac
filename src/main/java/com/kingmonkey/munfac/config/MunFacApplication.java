@@ -13,7 +13,7 @@ public class MunFacApplication {
 	public static void main(String[] args) {
 
 		context = SpringApplication.run(MunFacApplication.class, args);
-		printBeanList();
+		//printBeanList();
 	}
 
 	public static void printBeanList() {

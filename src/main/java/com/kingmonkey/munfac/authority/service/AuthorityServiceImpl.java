@@ -56,23 +56,25 @@ public class AuthorityServiceImpl implements AuthorityService{
 
 
         // 1. 사번 조회
-        Optional<Member> member = memberRepository.findById(memberDTO.getMemberNo());
+        int memberNo = memberRepository.findMemberNoByMemberId(memberDTO.getMemberId());
+        log.info("[AuthService] memberNo : " + memberNo);
 
-        if(member == null) {
-            throw new LoginFailedException("존재하지 않는 사원번호입니다.");
-        }
+        Optional<Member> selectedMember = memberRepository.findById(memberNo);
+        log.info("[AuthService] selectedMember : " + selectedMember.toString());
+
+        log.info("0000 : " + passwordEncoder.encode("0000"));
 
         // 2. 비밀번호 매칭
         //    (BCrypt 암호화 라이브러리 bean을 의존성 주입받아 처리하는 부분부터 security 설정 부분을 추가해보자.)
         //  mathces(평문, 다이제스트)
-        if(!passwordEncoder.matches(memberDTO.getMemberPw(), member.get().getMemberPw())){
+        if(!passwordEncoder.matches(memberDTO.getMemberPw(), selectedMember.get().getMemberPw())){
             log.info("[AuthService] 패스워드 틀려쪄염!!!!");
             throw new LoginFailedException("잘못된 비밀번호입니다.");
         }
 
 
         // 3. 토큰 발급
-        TokenDTO tokenDTO = tokenProvider.generateTokenDTO(member.get());
+        TokenDTO tokenDTO = tokenProvider.generateTokenDTO(selectedMember.get());
         log.info("[AuthService] tokenDTO{}", tokenDTO);
 
         log.info("[AuthService] 로그인 끄으으으으으으으으읕~~~~~~~~~~~~~~~~");

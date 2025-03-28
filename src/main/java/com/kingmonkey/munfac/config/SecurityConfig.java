@@ -9,10 +9,12 @@ import com.kingmonkey.munfac.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,7 +32,7 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Autowired
-    public SecurityConfig(TokenProvider tokenProvider
+    public SecurityConfig(@Lazy TokenProvider tokenProvider
                         , JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint
                         , JwtAccessDeniedHandler jwtAccessDeniedHandler) {
         this.tokenProvider = tokenProvider;
@@ -41,7 +43,7 @@ public class SecurityConfig {
 
     // 1. 암호화 처리를 위한 PasswordEncoder를 빈으로 설정(빈을 등록시 메소드 이름 오타 없을 것)
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -58,38 +60,31 @@ public class SecurityConfig {
     // 3. HTTP요청에 대한 권한별 설정(세션 인증 -> 토큰 인증으로 인해 바뀐 부분 있음)
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
-                // CSRF 비활성화
                 .csrf(csrf -> csrf.disable())
-
-                // 예외 처리 설정
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint) // 401 처리
-                        .accessDeniedHandler(jwtAccessDeniedHandler)          // 403 처리
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
-
-                // HTTP 요청에 대한 권한 설정
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/").authenticated()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // CORS preflight 허용
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/v1/**").permitAll()
                         .requestMatchers("/api/**").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().permitAll() // 모든 요청 허용 (개발용)
+                        .anyRequest().permitAll()
                 )
-
-                // 세션 관리 설정
+                // 세션 기반으로 변경 (STATELESS 제거)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 기본 세션 사용
                 )
-
-                // CORS 설정
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
-                // JWT 필터 추가 (apply 대신 직접 필터 추가)
-                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider),
-                        UsernamePasswordAuthenticationFilter.class);
+                // 폼 로그인 활성화 및 커스텀 로그인 페이지 설정
+                .formLogin(form -> form
+                        .loginPage("/auth/custom-login") // 커스텀 로그인 페이지 경로
+                        .defaultSuccessUrl("/", true) // 로그인 성공 시 이동 경로
+                        .permitAll()
+                );
 
         return http.build();
     }
