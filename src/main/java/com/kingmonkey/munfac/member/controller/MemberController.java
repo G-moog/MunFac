@@ -6,10 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/member")
@@ -21,6 +19,17 @@ public class MemberController {
     @Autowired
     public MemberController(MemberService memberService){
         this.memberService = memberService;
+    }
+
+    @GetMapping("/loginPage")
+    public ModelAndView loginPage (){
+
+        log.info("[MemberController] loginPage Activated");
+
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("loginPage.html");
+
+        return mv;
     }
 
     @ResponseBody

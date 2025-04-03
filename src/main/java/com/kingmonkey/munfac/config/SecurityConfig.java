@@ -1,24 +1,36 @@
 package com.kingmonkey.munfac.config;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import com.kingmonkey.munfac.jwt.JwtAccessDeniedHandler;
 import com.kingmonkey.munfac.jwt.JwtAuthenticationEntryPoint;
 import com.kingmonkey.munfac.jwt.JwtAuthenticationFilter;
 import com.kingmonkey.munfac.jwt.TokenProvider;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -30,6 +42,7 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
     @Autowired
     public SecurityConfig(@Lazy TokenProvider tokenProvider
@@ -52,7 +65,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers("/css/**", "/js/**", "/images/**"
-                , "/lib/**", "/productimgs/**", "/stampimgs/**"
+                , "/lib/**", "/productimgs/**", "/stampimgs/**", "/member/loginPage.html"
                 , "approvalfiles/**");
     }
 
@@ -61,30 +74,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                        .accessDeniedHandler(jwtAccessDeniedHandler)
-                )
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/").authenticated()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/api/v1/**").permitAll()
-                        .requestMatchers("/api/**").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().permitAll()
-                )
-                // 세션 기반으로 변경 (STATELESS 제거)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 기본 세션 사용
-                )
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                // 폼 로그인 활성화 및 커스텀 로그인 페이지 설정
-                .formLogin(form -> form
-                        .loginPage("/auth/custom-login") // 커스텀 로그인 페이지 경로
-                        .defaultSuccessUrl("/", true) // 로그인 성공 시 이동 경로
-                        .permitAll()
-                );
+            .authorizeHttpRequests(auth -> auth
+                    //.requestMatchers("/member/loginPage", "/member/loginProc").permitAll()
+                    .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                            .loginPage("/member/loginPage")
+                            .loginProcessingUrl("/member/loginProc")
+                            .defaultSuccessUrl("/main", false)
+                            .failureUrl("/failed")
+                            .usernameParameter("memberId")
+                            .passwordParameter("password")
+                            .successHandler(new AuthenticationSuccessHandler(){
+                                @Override
+                                public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                                    log.info("[SecurityConfig - SecurityFilterChain(successHandler) - authentication] : " + authentication);
+                                    response.sendRedirect("/main");
+                                }
+                            })
+                            .failureHandler(new AuthenticationFailureHandler() {
+                                @Override
+                                public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+                                    log.info("[SecurityConfig - SecurityFilterChain(failureHandler) - exception] : " + exception);
+                                    response.sendRedirect("/main");
+                                }
+                            })
+                            .permitAll()
+                    );
 
         return http.build();
     }
