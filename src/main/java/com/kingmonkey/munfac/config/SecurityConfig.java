@@ -5,9 +5,7 @@ import java.util.Arrays;
 
 import com.kingmonkey.munfac.jwt.JwtAccessDeniedHandler;
 import com.kingmonkey.munfac.jwt.JwtAuthenticationEntryPoint;
-import com.kingmonkey.munfac.jwt.JwtAuthenticationFilter;
 import com.kingmonkey.munfac.jwt.TokenProvider;
-import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,21 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -79,28 +71,28 @@ public class SecurityConfig {
                     .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                            .loginPage("/member/loginPage")
-                            .loginProcessingUrl("/member/loginProc")
-                            .defaultSuccessUrl("/main", false)
-                            .failureUrl("/failed")
-                            .usernameParameter("memberId")
-                            .passwordParameter("password")
-                            .successHandler(new AuthenticationSuccessHandler(){
-                                @Override
-                                public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                                    log.info("[SecurityConfig - SecurityFilterChain(successHandler) - authentication] : " + authentication);
-                                    response.sendRedirect("/main");
-                                }
-                            })
-                            .failureHandler(new AuthenticationFailureHandler() {
-                                @Override
-                                public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                                    log.info("[SecurityConfig - SecurityFilterChain(failureHandler) - exception] : " + exception);
-                                    response.sendRedirect("/main");
-                                }
-                            })
-                            .permitAll()
-                    );
+                    .loginPage("/member/loginPage")
+                    .loginProcessingUrl("/member/loginProc")
+                    .defaultSuccessUrl("/main", false)
+                    .failureUrl("/failed")
+                    .usernameParameter("memberId")
+                    .passwordParameter("password")
+                    .successHandler(new AuthenticationSuccessHandler(){
+                        @Override
+                        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                            log.info("[SecurityConfig - SecurityFilterChain(successHandler) - authentication] : " + authentication);
+                            response.sendRedirect("/main");
+                        }
+                    })
+                    .failureHandler(new AuthenticationFailureHandler() {
+                        @Override
+                        public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+                            log.info("[SecurityConfig - SecurityFilterChain(failureHandler) - exception] : " + exception);
+                            response.sendRedirect("/main");
+                        }
+                    })
+                    .permitAll()
+            );
 
         return http.build();
     }
