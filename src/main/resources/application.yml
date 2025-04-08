@@ -1,0 +1,19 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: MunFac
+  datasource:
+    driverClassName: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@localhost:1522/xe
+    username: C##kingmonkey
+    password: kingmonkey
+  security:
+    user:
+      name: user1
+      password: 0000
+      roles: USER
+
+jwt:
+  secret: thisisveryveryhardsecurekeyofkingmonkeythatnobodycanbreakthroughitbutifixedthistwicecausethiswastooshortsonowthisisverylongsecurekey

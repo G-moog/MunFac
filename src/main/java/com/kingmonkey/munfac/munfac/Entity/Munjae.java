@@ -23,41 +23,41 @@ public class Munjae implements Serializable {
     private static final long serialVersionUID = 1L; // 고유식별자 필드
 
     @Id
-    @Column(name="MUNNO")
+    @Column(name="MUN_NO")
     @GeneratedValue(
                         strategy = GenerationType.SEQUENCE,
                         generator="MUNJAE_SEQ_GENERATOR"
                    )
     private int munNo;
 
-    @Column(name="CATENO")
-    private String cateNo;
+    @Column(name="CATE_NO")
+    private String cateNo = "9999";
 
-    @Column(name="MEMBERNO")
-    private String memberNo;
+    @Column(name="MEMBER_NO")
+    private String memberNo = "9999";
 
-    @Column(name="MUNTITLE")
+    @Column(name="MUN_TITLE")
     private String munTitle;
 
-    @Column(name="MUNCONTENT")
+    @Column(name="MUN_CONT")
     private String munContent;
 
-    @Column(name="MUNTYPE")
+    @Column(name="MUN_TYPE")
     private String munType;
 
-    @Column(name="CHOOSE1CONTENT")
+    @Column(name="CHOOSE1CONT")
     private String choose1Content;
 
-    @Column(name="CHOOSE2CONTENT")
+    @Column(name="CHOOSE2CONT")
     private String choose2Content;
 
-    @Column(name="CHOOSE3CONTENT")
+    @Column(name="CHOOSE3CONT")
     private String choose3Content;
 
-    @Column(name="CHOOSE4CONTENT")
+    @Column(name="CHOOSE4CONT")
     private String choose4Content;
 
-    @Column(name="CHOOSE5CONTENT")
+    @Column(name="CHOOSE5CONT")
     private String choose5Content;
 
     @Column(name="ANSWER")

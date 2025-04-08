@@ -62,7 +62,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers("/css/**", "/js/**", "/images/**"
-                , "/lib/**", "/productimgs/**", "/stampimgs/**", "/member/loginPage.html"
+                , "/lib/**", "/productimgs/**", "/stampimgs/**", "/member/loginPage.html", "*.**"
                 , "approvalfiles/**");
     }
 
@@ -71,17 +71,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        //.requestMatchers("/member/loginPage", "/member/loginProc").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/member/loginPage", "/auth/login", "/main").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
                         .loginPage("/member/loginPage")
-                        .loginProcessingUrl("/member/loginProc")
-                        .defaultSuccessUrl("/main", false)
+                        //.loginProcessingUrl("/auth/login")
+                        .defaultSuccessUrl("/main", true)
                         .failureUrl("/failed")
                         .usernameParameter("memberId")
-                        .passwordParameter("password")
+                        .passwordParameter("memberPw")
                         .successHandler(new AuthenticationSuccessHandler(){
                             @Override
                             public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
