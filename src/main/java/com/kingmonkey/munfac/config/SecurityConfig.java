@@ -9,6 +9,7 @@ import com.kingmonkey.munfac.jwt.TokenProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -38,8 +43,8 @@ public class SecurityConfig {
 
     @Autowired
     public SecurityConfig(@Lazy TokenProvider tokenProvider
-                        , JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint
-                        , JwtAccessDeniedHandler jwtAccessDeniedHandler) {
+            , JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint
+            , JwtAccessDeniedHandler jwtAccessDeniedHandler) {
         this.tokenProvider = tokenProvider;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
@@ -66,33 +71,57 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(auth -> auth
-                    //.requestMatchers("/member/loginPage", "/member/loginProc").permitAll()
-                    .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                    .loginPage("/member/loginPage")
-                    .loginProcessingUrl("/member/loginProc")
-                    .defaultSuccessUrl("/main", false)
-                    .failureUrl("/failed")
-                    .usernameParameter("memberId")
-                    .passwordParameter("password")
-                    .successHandler(new AuthenticationSuccessHandler(){
-                        @Override
-                        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                            log.info("[SecurityConfig - SecurityFilterChain(successHandler) - authentication] : " + authentication);
-                            response.sendRedirect("/main");
-                        }
-                    })
-                    .failureHandler(new AuthenticationFailureHandler() {
-                        @Override
-                        public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                            log.info("[SecurityConfig - SecurityFilterChain(failureHandler) - exception] : " + exception);
-                            response.sendRedirect("/main");
-                        }
-                    })
-                    .permitAll()
-            );
+                .authorizeHttpRequests(auth -> auth
+                        //.requestMatchers("/member/loginPage", "/member/loginProc").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/member/loginPage")
+                        .loginProcessingUrl("/member/loginProc")
+                        .defaultSuccessUrl("/main", false)
+                        .failureUrl("/failed")
+                        .usernameParameter("memberId")
+                        .passwordParameter("password")
+                        .successHandler(new AuthenticationSuccessHandler(){
+                            @Override
+                            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                                log.info("[SecurityConfig - SecurityFilterChain(successHandler) - authentication] : " + authentication);
+                                response.sendRedirect("/main");
+                            }
+                        })
+                        .failureHandler(new AuthenticationFailureHandler() {
+                            @Override
+                            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+                                log.info("[SecurityConfig - SecurityFilterChain(failureHandler) - exception] : " + exception);
+                                response.sendRedirect("/main");
+                            }
+                        })
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/member/logout")
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/member/logoutProc", "POST"))
+                        .logoutSuccessUrl("/member/loginPage?logout")
+                        .logoutSuccessHandler(new LogoutSuccessHandler(){
+                            @Override
+                            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                                response.sendRedirect("/member/loginPage?logout");
+                            }
+                        })
+                        .deleteCookies("JSESSIONID", "remember-me")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .addLogoutHandler(new LogoutHandler(){
+                            @Override
+                            public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+                                HttpSession session = request.getSession();
+                                session.invalidate();
+                                SecurityContextHolder.getContextHolderStrategy().getContext().setAuthentication(null);
+                                SecurityContextHolder.getContextHolderStrategy().clearContext();
+                            }
+                        })
+                        .permitAll()
+                );
 
         return http.build();
     }
