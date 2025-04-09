@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("solvingpage")
@@ -24,16 +25,27 @@ public class SolvingPageController {
     }
 
     @GetMapping("/")
-    public String solvingpage() {
-        return "solvingPage.html";
+    public ModelAndView solvingpage() {
+
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("solvingPage.html");
+
+        //문제 목록(푼 문제 안 푼 문제)
+
+        //지금 풀 문제 정보
+
+
+        return mv;
     }
+
+
+
+
 
     // 문제 조회
     @ResponseBody
     @GetMapping("/selectmun")
     public ResponseEntity<ResponseDTO> selectMun(MunDTO munDTO) {
-
-
 
         //여기서 munDTO의 데이터를 select한다. 1은 성공. 0은 실패
         int selectResult = 0;

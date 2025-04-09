@@ -18,22 +18,43 @@
     <!-- 객관식 주관식 O/X 고르는 상단 메뉴(E) -->
 
     <!-- 객관식 문제 만드는 공간(S) -->
-    <form action="/munfac/createmun">
+    <form commandName="board" name="board" method="post" enctype="multipart/form-data"  action="/munfac/createmun">
         <input type="hidden" name="munType" value="eq"/>
-        <input type="hidden" id="answer" name="answer" value="0"/>
 
         <label>문제 내용</label> <br />
-        <input class="munContent" name="munContent" />
+        <input class="munContent" name="munContent" id="munContent"/>
         
         <br />
 
         <label>정답</label> <br />
-        <input class="eqAnswer" />
+        <input class="eqAnswer" id="answer" name="answer" value="0"/>
 
 
         <br>
-        <button>문제 만들기</button>
+        <button type="button" onclick="submitEQ()">문제 만들기</button>
     </form>
     <!-- 객관식 문제 만드는 공간(E) -->
+
+    <script>
+        function validateBoard(){
+            if(document.getElementById("munContent").value == null || document.getElementById("munContent").value == ""){
+                alert("문제를 입력해주십시오.")
+                return false;
+            }else if(document.getElementById("answer").value == null || document.getElementById("answer").value == ""){
+                alert("답안을 입력해주십시오.")
+                return false;
+            }
+        }
+
+        function submitEQ(){
+            if(!validateBoard){
+                return false;
+            }
+
+            if (confirm('해당 문제를 등록하시겠습니까?')) {
+                document.board.submit();
+            }
+        }
+    </script>
 </body>
 </html>

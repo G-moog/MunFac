@@ -7,6 +7,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service("MunFacService")
 public class MunFacServiceImpl implements MunFacService {
 
@@ -45,5 +48,11 @@ public class MunFacServiceImpl implements MunFacService {
     @Override
     public int selectMun(MunDTO munDTO) throws Exception {
         return 0;
+    }
+
+    public List<String> selectMunListbyCate(int memberNo, int munNo) throws Exception {
+        ArrayList<String> munList = (ArrayList<String>) munFacRepository.selectMunListbyCate(memberNo, munNo);
+
+        return munList;
     }
 }
